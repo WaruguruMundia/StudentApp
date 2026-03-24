@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "students")
@@ -53,6 +54,7 @@ public class Student {
     // ── Relationships ─────────────────────────────────────────────────────────
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Registration> registrations;
+
 
     // ── Enums ─────────────────────────────────────────────────────────────────
     public enum Gender { MALE, FEMALE, OTHER }

@@ -61,7 +61,7 @@ public class StudentController {
     // ── Show edit form ────────────────────────────────────────────────────────
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        return studentService.getStudentById(id)
+        String s = studentService.getStudentById(id)
                 .map(student -> {
                     model.addAttribute("student", student);
                     model.addAttribute("genders", Student.Gender.values());
@@ -72,6 +72,7 @@ public class StudentController {
                     ra.addFlashAttribute("errorMsg", "Student not found.");
                     return "redirect:/students";
                 });
+        return s;
     }
 
     // ── Update existing student ───────────────────────────────────────────────

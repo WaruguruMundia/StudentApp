@@ -13,19 +13,14 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+
     // --- Basic CRUD Operations ---
 
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    public Student getStudentById(Long id) {
-        // Returns null if not found (standard from your 2nd version)
-        return studentRepository.findById(id).orElse(null);
-    }
-
-    public Optional<Student> findById(Long id) {
-        // Returns Optional for safer handling (from your 1st version)
+    public Optional<Student> getStudentById(Long id) {
         return studentRepository.findById(id);
     }
 
