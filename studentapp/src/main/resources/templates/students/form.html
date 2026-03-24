@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        ${pageTitle},
+        ~{::content},
+        '<a href=''/''>Home</a> <span class=''sep''>›</span> <a href=''/students''>Students</a> <span class=''sep''>›</span> ' + ${pageTitle}
+      )}">
+<body><div th:fragment="content">
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-header-icon">👤</div>
+      <div>
+        <div class="form-header-title" th:text="${pageTitle}">Student Form</div>
+        <div class="form-header-sub" th:if="${student.id == null}">Fill in the details to register a new student.</div>
+        <div class="form-header-sub" th:if="${student.id != null}">Update the student's information below.</div>
+      </div>
+    </div>
+
+    <form th:action="${student.id == null ? '/students/new' : '/students/' + student.id + '/edit'}"
+          th:object="${student}" method="post" novalidate>
+
+      <div class="form-body">
+        <div class="form-grid">
+
+          <!-- First Name -->
+          <div class="form-group">
+            <label class="form-label">First Name <span class="req">*</span></label>
+            <input type="text" th:field="*{firstName}"
+                   class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                   placeholder="e.g. Amara"/>
+            <div class="field-error" th:if="${#fields.hasErrors('firstName')}">
+              ⚠ <span th:errors="*{firstName}"></span>
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group">
+            <label class="form-label">Last Name <span class="req">*</span></label>
+            <input type="text" th:field="*{lastName}"
+                   class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                   placeholder="e.g. Osei"/>
+            <div class="field-error" th:if="${#fields.hasErrors('lastName')}">
+              ⚠ <span th:errors="*{lastName}"></span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group span-2">
+            <label class="form-label">Email Address <span class="req">*</span></label>
+            <input type="email" th:field="*{email}"
+                   class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                   placeholder="e.g. amara.osei@university.edu"/>
+            <div class="field-error" th:if="${#fields.hasErrors('email')}">
+              ⚠ <span th:errors="*{email}"></span>
+            </div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group">
+            <label class="form-label">Date of Birth <span class="req">*</span></label>
+            <input type="date" th:field="*{dateOfBirth}"
+                   class="form-control" th:classappend="${#fields.hasErrors('dateOfBirth')} ? 'is-invalid'"/>
+            <div class="field-error" th:if="${#fields.hasErrors('dateOfBirth')}">
+              ⚠ <span th:errors="*{dateOfBirth}"></span>
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" th:field="*{phone}"
+                   class="form-control" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                   placeholder="+254712345678"/>
+            <div class="field-error" th:if="${#fields.hasErrors('phone')}">
+              ⚠ <span th:errors="*{phone}"></span>
+            </div>
+            <span class="form-hint">International format, e.g. +254712345678</span>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group span-2">
+            <label class="form-label">Gender</label>
+            <select th:field="*{gender}" class="form-control"
+                    th:classappend="${#fields.hasErrors('gender')} ? 'is-invalid'">
+              <option value="">— Select gender —</option>
+              <option th:each="g : ${genders}" th:value="${g}" th:text="${g}">MALE</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <a href="/students" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-accent" th:if="${student.id == null}">
+          ✅ Save Student
+        </button>
+        <button type="submit" class="btn btn-primary" th:if="${student.id != null}">
+          💾 Update Student
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div></body>
+</html>

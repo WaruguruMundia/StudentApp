@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content, breadcrumb)">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${title} + ' — StudentApp'">StudentApp</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <a href="/" class="brand-mark">
+      <div class="brand-icon">🎓</div>
+      <div>
+        <div class="brand-text">StudentApp</div>
+        <div class="brand-sub">Academic Portal</div>
+      </div>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="/" class="nav-item">
+      <span class="nav-icon">⬛</span> Dashboard
+    </a>
+
+    <div class="nav-section-label">Manage</div>
+    <a href="/students" class="nav-item">
+      <span class="nav-icon">👤</span> Students
+    </a>
+    <a href="/courses" class="nav-item">
+      <span class="nav-icon">📚</span> Courses
+    </a>
+    <a href="/registrations" class="nav-item">
+      <span class="nav-icon">📋</span> Registrations
+    </a>
+
+    <div class="nav-section-label">System</div>
+    <a href="/h2-console" target="_blank" class="nav-item">
+      <span class="nav-icon">🗄️</span> H2 Console
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    v1.0.0 · Spring Boot 3
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrapper">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="page-breadcrumb" th:utext="${breadcrumb}">Home</div>
+    </div>
+    <div class="topbar-right">
+      <a href="/students/new" class="topbar-btn" title="Add Student">➕</a>
+      <a href="/" class="topbar-btn" title="Dashboard">⬛</a>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main class="page-content fade-in">
+
+    <!-- Flash Messages -->
+    <div th:if="${successMsg}" class="alert alert-success">
+      <span>✅</span>
+      <span th:text="${successMsg}"></span>
+      <button class="alert-dismiss" type="button">×</button>
+    </div>
+    <div th:if="${errorMsg}" class="alert alert-error">
+      <span>❌</span>
+      <span th:text="${errorMsg}"></span>
+      <button class="alert-dismiss" type="button">×</button>
+    </div>
+
+    <!-- Dynamic Content -->
+    <div th:replace="${content}">Content goes here</div>
+
+  </main>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">Confirm Delete</div>
+    <p class="modal-text">
+      Are you sure you want to delete <strong id="deleteTargetName"></strong>?
+      This action cannot be undone.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

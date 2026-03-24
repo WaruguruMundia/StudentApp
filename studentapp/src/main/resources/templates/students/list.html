@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        'Students',
+        ~{::content},
+        '<a href=''/''>Home</a> <span class=''sep''>›</span> Students'
+      )}">
+<body><div th:fragment="content">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Students</h1>
+      <p class="page-count" th:text="${students.size()} + ' students found'">0 students found</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <!-- Search -->
+      <form th:action="@{/students}" method="get" class="search-form">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" name="q" class="search-input"
+                 placeholder="Search students…"
+                 th:value="${searchQuery}"/>
+        </div>
+        <button type="submit" class="btn btn-outline btn-sm">Search</button>
+        <a th:if="${searchQuery}" href="/students" class="btn btn-outline btn-sm">✕ Clear</a>
+      </form>
+      <a href="/students/new" class="btn btn-accent">
+        <span>➕</span> Add Student
+      </a>
+    </div>
+  </div>
+
+  <!-- Search result notice -->
+  <div th:if="${searchQuery}" class="alert alert-warning">
+    <span>🔍</span>
+    Showing results for "<strong th:text="${searchQuery}"></strong>"
+    — <span th:text="${students.size()}">0</span> found.
+    <button class="alert-dismiss" onclick="window.location='/students'">×</button>
+  </div>
+
+  <div class="table-card">
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(students)}" class="empty-state">
+      <div class="empty-icon">👤</div>
+      <div class="empty-title" th:if="${searchQuery}">No students match your search</div>
+      <div class="empty-title" th:unless="${searchQuery}">No students yet</div>
+      <p class="empty-text" th:unless="${searchQuery}">Add your first student to get started.</p>
+      <br/>
+      <a href="/students/new" class="btn btn-accent" th:unless="${searchQuery}">➕ Add Student</a>
+    </div>
+
+    <!-- Table -->
+    <table class="data-table" th:if="${!#lists.isEmpty(students)}">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Date of Birth</th>
+          <th>Phone</th>
+          <th>Gender</th>
+          <th>Courses</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="s, i : ${students}">
+          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)"
+              th:text="${i.count}">1</td>
+          <td>
+            <div class="student-cell">
+              <div class="avatar"
+                   th:classappend="${i.index % 5 == 0} ? 'avatar-green' :
+                                   (${i.index % 5 == 1} ? 'avatar-blue' :
+                                   (${i.index % 5 == 2} ? 'avatar-purple' :
+                                   (${i.index % 5 == 3} ? 'avatar-orange' : 'avatar-pink')))"
+                   th:text="${#strings.substring(s.firstName,0,1) + #strings.substring(s.lastName,0,1)}">AB</div>
+              <div>
+                <div class="student-name" th:text="${s.fullName}">Full Name</div>
+                <div class="student-email" th:text="${s.email}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dabfb7bbb3b69abfa2bbb7aab6bff4b9b5b7">[email&#160;protected]</a></div>
+              </div>
+            </div>
+          </td>
+          <td style="font-family:'DM Mono',monospace;font-size:13px"
+              th:text="${s.dateOfBirth != null ? #temporals.format(s.dateOfBirth, 'dd MMM yyyy') : '—'}">—</td>
+          <td style="font-family:'DM Mono',monospace;font-size:13px"
+              th:text="${s.phone != null ? s.phone : '—'}">—</td>
+          <td>
+            <span th:if="${s.gender != null}" class="badge badge-dept" th:text="${s.gender}">—</span>
+            <span th:if="${s.gender == null}" style="color:var(--muted)">—</span>
+          </td>
+          <td>
+            <span class="credit-pill"
+                  th:text="${s.registrations != null ? s.registrations.size() : 0} + ' enrolled'">0 enrolled</span>
+          </td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <a th:href="@{/students/{id}/view(id=${s.id})}" class="btn btn-sm btn-outline" title="View">👁</a>
+              <a th:href="@{/students/{id}/edit(id=${s.id})}" class="btn btn-sm btn-outline" title="Edit">✏️</a>
+              <form th:id="'del-' + ${s.id}" th:action="@{/students/{id}/delete(id=${s.id})}" method="post" style="display:inline">
+                <button type="button" class="btn btn-sm btn-danger" title="Delete"
+                        th:onclick="'openDeleteModal(' + ${s.id} + ', \'' + ${s.fullName} + '\', \'del-' + ${s.id} + '\')'">🗑</button>
+           

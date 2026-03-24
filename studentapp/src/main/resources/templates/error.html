@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Error — StudentApp</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--cream)">
+  <div style="text-align:center;max-width:480px;padding:40px">
+    <div style="font-size:80px;margin-bottom:16px"
+         th:text="${status == 404} ? '🔍' : (${status == 403} ? '🔒' : '⚠️')">⚠️</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--navy);margin-bottom:8px"
+        th:text="${status}">Error</h1>
+    <p style="font-size:18px;color:var(--muted);margin-bottom:24px"
+       th:text="${error}">Something went wrong</p>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6"
+       th:if="${message}" th:text="${message}"></p>
+    <a href="/" class="btn btn-accent" style="display:inline-flex">← Back to Dashboard</a>
+  </div>
+</body>
+</html>

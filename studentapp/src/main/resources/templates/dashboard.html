@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        'Dashboard',
+        ~{::content},
+        '<a href=''/''>Home</a>'
+      )}">
+<body><div th:fragment="content">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <h1 class="dash-title">Academic Dashboard</h1>
+    <p class="dash-subtitle">
+      Welcome back — <strong th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Today</strong>
+    </p>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid stagger">
+    <div class="stat-card card-students">
+      <span class="stat-icon">👤</span>
+      <div class="stat-value" th:data-target="${totalStudents}" th:text="${totalStudents}">0</div>
+      <div class="stat-label">Total Students</div>
+      <div class="stat-trend">▲ Enrolled</div>
+    </div>
+    <div class="stat-card card-courses">
+      <span class="stat-icon">📚</span>
+      <div class="stat-value" th:data-target="${totalCourses}" th:text="${totalCourses}">0</div>
+      <div class="stat-label">Total Courses</div>
+      <div class="stat-trend" style="color:var(--blue)">▲ Available</div>
+    </div>
+    <div class="stat-card card-regs">
+      <span class="stat-icon">📋</span>
+      <div class="stat-value" th:data-target="${totalRegistrations}" th:text="${totalRegistrations}">0</div>
+      <div class="stat-label">Registrations</div>
+      <div class="stat-trend">
+        <span th:text="${activeRegistrations}">0</span>&nbsp;active
+      </div>
+    </div>
+    <div class="stat-card card-grade">
+      <span class="stat-icon">🏆</span>
+      <div class="stat-value" th:text="${avgGrade}">N/A</div>
+      <div class="stat-label">Avg Grade (%)</div>
+      <div class="stat-trend" style="color:var(--amber)">▲ Class average</div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="dash-grid">
+
+    <!-- Recent Registrations -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <span class="dash-card-title">Recent Registrations</span>
+        <a href="/registrations" class="dash-card-link">View all →</a>
+      </div>
+      <div th:if="${#lists.isEmpty(recentRegistrations)}" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">No registrations yet</div>
+        <p class="empty-text">Start by enrolling a student in a course.</p>
+      </div>
+      <table class="mini-table" th:if="${!#lists.isEmpty(recentRegistrations)}">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="reg : ${recentRegistrations}">
+            <td>
+              <div class="student-cell">
+                <div class="avatar avatar-green"
+                     th:text="${#strings.substring(reg.student.firstName,0,1) + #strings.substring(reg.student.lastName,0,1)}">AB</div>
+                <span th:text="${reg.student.fullName}">Name</span>
+              </div>
+            </td>
+            <td>
+              <div th:text="${reg.course.code}" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)"></div>
+              <div th:text="${reg.course.name}" style="font-size:13px;font-weight:600"></div>
+            </td>
+            <td>
+              <span class="badge"
+                    th:classappend="${reg.status.name() == 'ACTIVE'} ? 'badge-active' :
+                                    (${reg.status.name() == 'COMPLETED'} ? 'badge-completed' :
+                                    (${reg.status.name() == 'DROPPED'} ? 'badge-dropped' : 'badge-pending'))"
+                    th:text="${reg.status}">ACTIVE</span>
+            </td>
+            <td>
+              <span th:if="${reg.grade != null}"
+                    class="badge"
+                    th:classappend="${reg.letterGrade == 'A'} ? 'badge-grade-a' :
+                                    (${reg.letterGrade == 'B'} ? 'badge-grade-b' :
+                                    (${reg.letterGrade == 'C'} ? 'badge-grade-c' :
+                                    (${reg.letterGrade == 'D'} ? 'badge-grade-d' : 'badge-grade-f')))"
+                    th:text="${reg.grade + '% (' + reg.letterGrade + ')'}">90% (A)</span>
+              <span th:if="${reg.grade == null}" style="color:var(--muted);font-size:12px">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right Column -->
+    <div style="display:flex;flex-direction:column;gap:24px">
+
+      <!-- Top Courses -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Top Courses</span>
+          <a href="/courses" class="dash-card-link">All courses →</a>
+        </div>
+        <div class="course-rank-list" th:if="${!#lists.isEmpty(topCourses)}">
+          <div class="course-rank-item" th:each="course, i : ${topCourses}">
+            <div class="rank-num" th:text="${i.count}">1</div>
+            <div class="rank-info">
+              <div class="rank-name" th:text="${course.name}">Course Name</div>
+              <div class="rank-code" th:text="${course.code}">CODE</div>
+            </div>
+            <div class="rank-badge" th:text="${course.credits + ' cr'}">3 cr</div>
+          </div>
+        </div>
+        <div th:if="${#lists.isEmpty(topCourses)}" class="empty-state" style="padding:32px">
+          <div class="empty-icon">📚</div>
+          <p class="empty-text">No courses yet.</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <span class="dash-card-title">Quick Actions</span>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:10px">
+          <a href="/students/new" class="btn btn-primary" style="justify-content:center">
+            <span>➕</span> Add New Student
+          </a>
+          <a href="/courses/new" class="btn btn-outline" style="justify-content:center">
+            <span>📚</span> Create Course
+          </a>
+          <a href="/registrations/new" class="btn btn-outline" style="justify-content:center">
+            <span>📋</span> New Registration
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div></body>
+</html>

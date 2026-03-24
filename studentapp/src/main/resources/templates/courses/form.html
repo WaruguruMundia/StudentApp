@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        ${pageTitle},
+        ~{::content},
+        '<a href=''/''>Home</a> <span class=''sep''>›</span> <a href=''/courses''>Courses</a> <span class=''sep''>›</span> ' + ${pageTitle}
+      )}">
+<body><div th:fragment="content">
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-header-icon">📚</div>
+      <div>
+        <div class="form-header-title" th:text="${pageTitle}">Course Form</div>
+        <div class="form-header-sub" th:if="${course.id == null}">Define a new course for enrolment.</div>
+        <div class="form-header-sub" th:if="${course.id != null}">Update the course details below.</div>
+      </div>
+    </div>
+
+    <form th:action="${course.id == null ? '/courses/new' : '/courses/' + course.id + '/edit'}"
+          th:object="${course}" method="post" novalidate>
+
+      <div class="form-body">
+        <div class="form-grid">
+
+          <!-- Name -->
+          <div class="form-group span-2">
+            <label class="form-label">Course Name <span class="req">*</span></label>
+            <input type="text" th:field="*{name}"
+                   class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                   placeholder="e.g. Introduction to Computer Science"/>
+            <div class="field-error" th:if="${#fields.hasErrors('name')}">
+              ⚠ <span th:errors="*{name}"></span>
+            </div>
+          </div>
+
+          <!-- Code -->
+          <div class="form-group">
+            <label class="form-label">Course Code <span class="req">*</span></label>
+            <input type="text" th:field="*{code}"
+                   class="form-control" th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'"
+                   placeholder="e.g. CS101" style="text-transform:uppercase"/>
+            <div class="field-error" th:if="${#fields.hasErrors('code')}">
+              ⚠ <span th:errors="*{code}"></span>
+            </div>
+            <span class="form-hint">Format: 2–5 uppercase letters + 3–4 digits</span>
+          </div>
+
+          <!-- Credits -->
+          <div class="form-group">
+            <label class="form-label">Credits <span class="req">*</span></label>
+            <input type="number" th:field="*{credits}" min="1" max="6"
+                   class="form-control" th:classappend="${#fields.hasErrors('credits')} ? 'is-invalid'"
+                   placeholder="3"/>
+            <div class="field-error" th:if="${#fields.hasErrors('credits')}">
+              ⚠ <span th:errors="*{credits}"></span>
+            </div>
+            <span class="form-hint">Between 1 and 6 credit hours</span>
+          </div>
+
+          <!-- Instructor -->
+          <div class="form-group">
+            <label class="form-label">Instructor <span class="req">*</span></label>
+            <input type="text" th:field="*{instructor}"
+                   class="form-control" th:classappend="${#fields.hasErrors('instructor')} ? 'is-invalid'"
+                   placeholder="e.g. Dr. Otieno"/>
+            <div class="field-error" th:if="${#fields.hasErrors('instructor')}">
+              ⚠ <span th:errors="*{instructor}"></span>
+            </div>
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <select th:field="*{department}" class="form-control">
+              <option value="">— Select department —</option>
+              <option th:each="d : ${departments}"
+                      th:value="${d}"
+                      th:text="${d.name().replace('_', ' ')}">Dept</option>
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group span-2">
+            <label class="form-label">Description</label>
+            <textarea th:field="*{description}"
+                      class="form-control" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
+                      placeholder="Brief course description (optional)…"></textarea>
+            <div class="field-error" th:if="${#fields.hasErrors('description')}">
+              ⚠ <span th:errors="*{description}"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <a href="/courses" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-accent" th:if="${course.id == null}">✅ Save Course</button>
+        <button type="submit" class="btn btn-primary" th:if="${course.id != null}">💾 Update Course</button>
+      </div>
+
+    </form>
+  </div>
+
+</div></body>
+</html>

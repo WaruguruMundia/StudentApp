@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        'New Registration',
+        ~{::content},
+        '<a href=''/''>Home</a> <span class=''sep''>›</span> <a href=''/registrations''>Registrations</a> <span class=''sep''>›</span> New'
+      )}">
+<body><div th:fragment="content">
+
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-header-icon">📋</div>
+      <div>
+        <div class="form-header-title" th:if="${registration.id == null}">New Registration</div>
+        <div class="form-header-title" th:if="${registration.id != null}">Edit Registration</div>
+        <div class="form-header-sub">Enrol a student into a course and track their progress.</div>
+      </div>
+    </div>
+
+    <form th:action="${registration.id == null ? '/registrations/new' : '/registrations/' + registration.id + '/edit'}"
+          th:object="${registration}" method="post" novalidate>
+
+      <div class="form-body">
+        <div class="form-grid">
+
+          <!-- Student -->
+          <div class="form-group span-2">
+            <label class="form-label">Student <span class="req">*</span></label>
+            <select th:field="*{student.id}"
+                    class="form-control" th:classappend="${#fields.hasErrors('student')} ? 'is-invalid'">
+              <option value="">— Select a student —</option>
+              <option th:each="s : ${students}"
+                      th:value="${s.id}"
+                      th:text="${s.fullName + ' (' + s.email + ')'}">Student</option>
+            </select>
+            <div class="field-error" th:if="${#fields.hasErrors('student')}">
+              ⚠ <span th:errors="*{student}"></span>
+            </div>
+          </div>
+
+          <!-- Course -->
+          <div class="form-group span-2">
+            <label class="form-label">Course <span class="req">*</span></label>
+            <select th:field="*{course.id}"
+                    class="form-control" th:classappend="${#fields.hasErrors('course')} ? 'is-invalid'">
+              <option value="">— Select a course —</option>
+              <option th:each="c : ${courses}"
+                      th:value="${c.id}"
+                      th:text="${c.code + ' — ' + c.name + ' (' + c.credits + ' cr)'}">Course</option>
+            </select>
+            <div class="field-error" th:if="${#fields.hasErrors('course')}">
+              ⚠ <span th:errors="*{course}"></span>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select th:field="*{status}" class="form-control">
+              <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}">ACTIVE</option>
+            </select>
+          </div>
+
+          <!-- Grade -->
+          <div class="form-group">
+            <label class="form-label">Grade (%)</label>
+            <input type="number" th:field="*{grade}" step="0.1" min="0" max="100"
+                   class="form-control" th:classappend="${#fields.hasErrors('grade')} ? 'is-invalid'"
+                   placeholder="e.g. 85.5"/>
+            <div class="field-error" th:if="${#fields.hasErrors('grade')}">
+              ⚠ <span th:errors="*{grade}"></span>
+            </div>
+            <span class="form-hint">Leave blank if not yet graded</span>
+          </div>
+
+          <!-- Registration Date -->
+          <div class="form-group span-2">
+            <label class="form-label">Registration Date</label>
+            <input type="date" th:field="*{registrationDate}" class="form-control"/>
+            <span class="form-hint">Defaults to today if left blank</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <a href="/registrations" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-accent" th:if="${registration.id == null}">✅ Register Student</button>
+        <button type="submit" class="btn btn-primary" th:if="${registration.id != null}">💾 Update Registration</button>
+      </div>
+
+    </form>
+  </div>
+
+</div></body>
+</html>

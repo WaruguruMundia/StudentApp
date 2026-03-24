@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        ${student.fullName},
+        ~{::content},
+        '<a href=''/''>Home</a> <span class=''sep''>›</span> <a href=''/students''>Students</a> <span class=''sep''>›</span> View'
+      )}">
+<body><div th:fragment="content">
+
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:20px">
+    <a href="/students" class="btn btn-outline">← Back</a>
+    <a th:href="@{/students/{id}/edit(id=${student.id})}" class="btn btn-primary">✏️ Edit</a>
+  </div>
+
+  <div class="detail-card">
+    <!-- Hero -->
+    <div class="detail-hero">
+      <div class="detail-avatar"
+           th:text="${#strings.substring(student.firstName,0,1) + #strings.substring(student.lastName,0,1)}">AB</div>
+      <div>
+        <div class="detail-name" th:text="${student.fullName}">Full Name</div>
+        <div class="detail-meta" th:text="${student.email}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="76131b171f1a36130e171b061a135815191b">[email&#160;protected]</a></div>
+        <div style="margin-top:10px">
+          <span class="badge badge-dept" th:if="${student.gender != null}" th:text="${student.gender}">MALE</span>
+          <span class="credit-pill" style="margin-left:8px"
+                th:text="${student.registrations != null ? student.registrations.size() : 0} + ' courses enrolled'">0 courses</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="detail-body">
+      <div class="detail-grid">
+        <div class="detail-field">
+          <div class="detail-field-label">Student ID</div>
+          <div class="detail-field-value" style="font-family:'DM Mono',monospace" th:text="'#' + ${student.id}">#1</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">Date of Birth</div>
+          <div class="detail-field-value"
+               th:text="${student.dateOfBirth != null ? #temporals.format(student.dateOfBirth, 'dd MMMM yyyy') : '—'}">—</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">Phone</div>
+          <div class="detail-field-value" style="font-family:'DM Mono',monospace"
+               th:text="${student.phone != null ? student.phone : '—'}">—</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">Gender</div>
+          <div class="detail-field-value" th:text="${student.gender != null ? student.gender : '—'}">—</div>
+        </div>
+      </div>
+
+      <!-- Enrollments -->
+      <div th:if="${student.registrations != null and !#lists.isEmpty(student.registrations)}">
+        <h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:16px;color:var(--navy)">
+          Enrolled Courses
+        </h3>
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Grade</th>
+                <th>Registered</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="reg : ${student.registrations}">
+                <td th:text="${reg.course.name}">Course Name</td>
+                <td style="font-family:'DM Mono',monospace;font-size:12px" th:text="${reg.course.code}">CS101</td>
+                <td>
+                  <span class="badge"
+                        th:classappend="${reg.status.name() == 'ACTIVE'} ? 'badge-active' :
+                                        (${reg.status.name() == 'COMPLETED'} ? 'badge-completed' :
+                                        (${reg.status.name() == 'DROPPED'} ? 'badge-dropped' : 'badge-pending'))"
+                        th:text="${reg.status}">ACTIVE</span>
+                </td>
+                <td>
+                  <span th:if="${reg.grade != null}"
+                        class="badge"
+                        th:classappend="${reg.letterGrade == 'A'} ? 'badge-grade-a' :
+                                        (${reg.letterGrade == 'B'} ? 'badge-grade-b' : 'badge-grade-c')"
+                        th:text="${reg.grade + '% (' + reg.letterGrade + ')'}">90% (A)</span>
+                  <span th:if="${reg.grade == null}" style="color:var(--muted);font-size:12px">Pending</span>
+                </td>
+                <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)"
+                    th:text="${#temporals.format(reg.registrationDate, 'dd MMM yyyy')}">01 Jan 2024</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div th:if="${student.registrations == null or #lists.isEmpty(student.registrations)}"
+           style="text-align:center;padding:32px;color:var(--muted)">
+        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <p>Not enrolled in any courses yet.</p>
+        <br/>
+        <a href="/
