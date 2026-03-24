@@ -1,8 +1,8 @@
-spring.application.name=StudentApp
 spring.datasource.url=jdbc:mysql://localhost:3306/studentapp_db
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=YOUR_PASSWORD_HERE
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+
 server.port=8081

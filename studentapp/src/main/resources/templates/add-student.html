@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Form | StudentApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background-color: #0d6efd; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark px-4 py-3 mb-4">
+        <span class="navbar-brand fw-bold fs-4">
+            <i class="bi bi-mortarboard-fill me-2"></i>StudentApp
+        </span>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <!-- Card -->
+            <div class="card p-4">
+
+                <!-- Title -->
+                <h4 class="fw-bold mb-4"
+                    th:text="${student.id} ? 'Edit Student' : 'Add New Student'">
+                </h4>
+
+                <!-- Form -->
+                <form th:action="@{/students/save}" th:object="${student}" method="post">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Full Name</label>
+                        <input type="text" class="form-control" th:field="*{name}"
+                               placeholder="e.g. John Doe" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email Address</label>
+                        <input type="email" class="form-control" th:field="*{email}"
+                               placeholder="e.g. john@university.com" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Program</label>
+                        <input type="text" class="form-control" th:field="*{program}"
+                               placeholder="e.g. Computer Science" required/>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Year of Study</label>
+                        <input type="number" class="form-control" th:field="*{year}"
+                               placeholder="e.g. 1" min="1" max="6" required/>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-circle me-1"></i> Save Student
+                        </button>
+                        <a href="/students" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
