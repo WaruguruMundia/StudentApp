@@ -27,7 +27,7 @@ public class RegistrationController {
     @GetMapping("/new")
     public String newForm(Model model) {
         model.addAttribute("registration", new Registration());
-        model.addAttribute("students", studentService.findAll());
+        model.addAttribute("students", studentService.getAllStudents());
         model.addAttribute("courses", courseService.findAll());
         model.addAttribute("statuses", Registration.Status.values());
         return "registrations/form";
@@ -44,7 +44,7 @@ public class RegistrationController {
             }
         }
         if (result.hasErrors()) {
-            model.addAttribute("students", studentService.findAll());
+            model.addAttribute("students", studentService.getAllStudents());
             model.addAttribute("courses", courseService.findAll());
             model.addAttribute("statuses", Registration.Status.values());
             return "registrations/form";
@@ -58,7 +58,7 @@ public class RegistrationController {
     public String editForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
         return registrationService.findById(id).map(reg -> {
             model.addAttribute("registration", reg);
-            model.addAttribute("students", studentService.findAll());
+            model.addAttribute("students", studentService.getAllStudents());
             model.addAttribute("courses", courseService.findAll());
             model.addAttribute("statuses", Registration.Status.values());
             return "registrations/form";
@@ -72,7 +72,7 @@ public class RegistrationController {
     public String update(@PathVariable Long id, @Valid @ModelAttribute Registration registration,
                          BindingResult result, Model model, RedirectAttributes ra) {
         if (result.hasErrors()) {
-            model.addAttribute("students", studentService.findAll());
+            model.addAttribute("students", studentService.getAllStudents());
             model.addAttribute("courses", courseService.findAll());
             model.addAttribute("statuses", Registration.Status.values());
             return "registrations/form";
