@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout(
-        'Dashboard',
-        ~{::content},
-        '<a href=''/''>Home</a>'
-      )}">
+      th:replace="fragments/layout :: layout (title='Dashboard', content=~{::content}, breadcrumb=|<a href='/' >Home</a>|)">
 <body><div th:fragment="content">
 
   <!-- Header -->
@@ -73,7 +69,7 @@
             <td>
               <div class="student-cell">
                 <div class="avatar avatar-green"
-                     th:text="${#strings.substring(reg.student.firstName,0,1) + #strings.substring(reg.student.lastName,0,1)}">AB</div>
+                     th:text="${reg.student.firstName[0]} + ${reg.student.lastName[0]}">AB</div>
                 <span th:text="${reg.student.fullName}">Name</span>
               </div>
             </td>
