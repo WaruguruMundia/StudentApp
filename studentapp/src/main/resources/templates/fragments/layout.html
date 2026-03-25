@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- ── SIDEBAR ─────────────────────────────────────────────── -->
 <aside class="sidebar">
   <div class="sidebar-brand">
     <a href="/" class="brand-mark">
@@ -23,18 +23,18 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section-label">Overview</div>
-    <a href="/" class="nav-item">
-      <span class="nav-icon">⬛</span> Dashboard
+    <a href="/" class="nav-item" id="nav-dashboard">
+      <span class="nav-icon">🏠</span> Dashboard
     </a>
 
     <div class="nav-section-label">Manage</div>
-    <a href="/students" class="nav-item">
+    <a href="/students" class="nav-item" id="nav-students">
       <span class="nav-icon">👤</span> Students
     </a>
-    <a href="/courses" class="nav-item">
+    <a href="/courses" class="nav-item" id="nav-courses">
       <span class="nav-icon">📚</span> Courses
     </a>
-    <a href="/registrations" class="nav-item">
+    <a href="/registrations" class="nav-item" id="nav-registrations">
       <span class="nav-icon">📋</span> Registrations
     </a>
 
@@ -49,7 +49,7 @@
   </div>
 </aside>
 
-<!-- MAIN -->
+<!-- ── MAIN ────────────────────────────────────────────────── -->
 <div class="main-wrapper">
 
   <!-- TOPBAR -->
@@ -59,7 +59,7 @@
     </div>
     <div class="topbar-right">
       <a href="/students/new" class="topbar-btn" title="Add Student">➕</a>
-      <a href="/" class="topbar-btn" title="Dashboard">⬛</a>
+      <a href="/" class="topbar-btn" title="Dashboard">🏠</a>
     </div>
   </header>
 
@@ -67,35 +67,36 @@
   <main class="page-content fade-in">
 
     <!-- Flash Messages -->
-    <div th:if="${successMsg}" class="alert alert-success">
+    <div th:if="${successMsg}" class="alert alert-success" role="alert">
       <span>✅</span>
       <span th:text="${successMsg}"></span>
-      <button class="alert-dismiss" type="button">×</button>
+      <button class="alert-dismiss" type="button" aria-label="Dismiss">×</button>
     </div>
-    <div th:if="${errorMsg}" class="alert alert-error">
+    <div th:if="${errorMsg}" class="alert alert-error" role="alert">
       <span>❌</span>
       <span th:text="${errorMsg}"></span>
-      <button class="alert-dismiss" type="button">×</button>
+      <button class="alert-dismiss" type="button" aria-label="Dismiss">×</button>
     </div>
 
     <!-- Dynamic Content -->
-    <div th:replace="${content}">Content goes here</div>
+    <div th:replace="${content}">Content placeholder</div>
 
   </main>
 </div>
 
-<!-- DELETE MODAL -->
-<div class="modal-overlay" id="deleteModal">
+<!-- ── DELETE MODAL ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="modal-icon">🗑️</div>
-    <div class="modal-title">Confirm Delete</div>
+    <div class="modal-title">Confirm Deletion</div>
     <p class="modal-text">
-      Are you sure you want to delete <strong id="deleteTargetName"></strong>?
+      You are about to permanently delete
+      <strong id="deleteTargetName">this record</strong>.
       This action cannot be undone.
     </p>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+      <button class="btn btn-outline" type="button" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" type="button" onclick="confirmDelete()">Yes, Delete</button>
     </div>
   </div>
 </div>

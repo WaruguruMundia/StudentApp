@@ -1,92 +1,116 @@
-// ── Auto-dismiss alerts ────────────────────────────────────
+// ── Auto-dismiss alerts ─────────────────────────────────────
 document.querySelectorAll('.alert').forEach(alert => {
-  setTimeout(() => {
-    alert.style.transition = 'opacity 0.5s, transform 0.5s';
-    alert.style.opacity = '0';
-    alert.style.transform = 'translateY(-8px)';
-    setTimeout(() => alert.remove(), 500);
-  }, 4000);
+  const timer = setTimeout(() => dismissAlert(alert), 4500);
+  // Clear auto-timer if user manually dismisses
+  alert.dataset.timer = timer;
 });
 
-// ── Dismiss button ──────────────────────────────────────────
+function dismissAlert(alert) {
+  if (!alert) return;
+  alert.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  alert.style.opacity = '0';
+  alert.style.transform = 'translateY(-6px)';
+  setTimeout(() => alert.remove(), 420);
+}
+
+// ── Manual dismiss button ────────────────────────────────────
 document.querySelectorAll('.alert-dismiss').forEach(btn => {
   btn.addEventListener('click', () => {
     const alert = btn.closest('.alert');
-    alert.style.transition = 'opacity 0.3s';
-    alert.style.opacity = '0';
-    setTimeout(() => alert.remove(), 300);
+    if (alert.dataset.timer) clearTimeout(parseInt(alert.dataset.timer));
+    dismissAlert(alert);
   });
 });
 
-// ── Delete confirmation modals ──────────────────────────────
+// ── Delete Confirmation Modal ────────────────────────────────
 function openDeleteModal(id, name, formId) {
-  const modal = document.getElementById('deleteModal');
-  const nameEl = document.getElementById('deleteTargetName');
-  const form   = document.getElementById(formId || 'deleteForm');
-  if (nameEl) nameEl.textContent = name || 'this record';
-  modal.classList.add('open');
+  const modal   = document.getElementById('deleteModal');
+  const nameEl  = document.getElementById('deleteTargetName');
+  if (nameEl)  nameEl.textContent = name || 'this record';
   modal.dataset.formId = formId;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeDeleteModal() {
-  document.getElementById('deleteModal').classList.remove('open');
+  const modal = document.getElementById('deleteModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function confirmDelete() {
   const formId = document.getElementById('deleteModal').dataset.formId;
-  if (formId) {
-    document.getElementById(formId).submit();
+  const form   = formId ? document.getElementById(formId) : null;
+  if (form) {
+    form.submit();
+  } else {
+    console.error('Delete form not found:', formId);
   }
 }
 
 // Close modal on overlay click
-document.addEventListener('click', e => {
-  if (e.target.id === 'deleteModal') closeDeleteModal();
+document.getElementById('deleteModal')?.addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeDeleteModal();
 });
 
-// ── Active nav highlighting ─────────────────────────────────
-const path = window.location.pathname;
-document.querySelectorAll('.nav-item').forEach(link => {
-  const href = link.getAttribute('href');
-  if (href && href !== '/' && path.startsWith(href)) {
-    link.classList.add('active');
-  } else if (href === '/' && (path === '/' || path === '/dashboard')) {
-    link.classList.add('active');
-  }
+// Close modal on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDeleteModal();
 });
 
-// ── Animate stat counters ───────────────────────────────────
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target, 10);
-  if (isNaN(target)) return;
-  let current = 0;
-  const step = Math.ceil(target / 40);
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = current;
-    if (current >= target) clearInterval(timer);
-  }, 25);
-}
+// ── Active nav highlighting ──────────────────────────────────
+(function() {
+  const path = window.location.pathname;
+  const navMap = {
+    'nav-dashboard':     ['/', '/dashboard'],
+    'nav-students':      ['/students'],
+    'nav-courses':       ['/courses'],
+    'nav-registrations': ['/registrations'],
+  };
 
+  Object.entries(navMap).forEach(([navId, prefixes]) => {
+    const el = document.getElementById(navId);
+    if (!el) return;
+    const isActive = prefixes.some(prefix =>
+      prefix === '/'
+        ? (path === '/' || path === '/dashboard')
+        : path.startsWith(prefix)
+    );
+    if (isActive) el.classList.add('active');
+  });
+})();
+
+// ── Stat counter animation ───────────────────────────────────
 document.querySelectorAll('.stat-value[data-target]').forEach(el => {
+  const target = parseInt(el.dataset.target, 10);
+  if (isNaN(target) || target === 0) return;
+
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter(el);
-        observer.disconnect();
-      }
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+
+      let current = 0;
+      const duration = 600;
+      const step = Math.ceil(target / (duration / 25));
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current;
+        if (current >= target) clearInterval(timer);
+      }, 25);
     });
-  });
+  }, { threshold: 0.3 });
+
   observer.observe(el);
 });
 
-// ── Search — clear button ───────────────────────────────────
+// ── Search — Escape to clear ─────────────────────────────────
 const searchInput = document.querySelector('.search-input');
-if (searchInput && searchInput.value) {
+if (searchInput) {
   searchInput.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && searchInput.value.trim()) {
       searchInput.value = '';
-      searchInput.closest('form').submit();
+      searchInput.closest('form')?.submit();
     }
   });
 }

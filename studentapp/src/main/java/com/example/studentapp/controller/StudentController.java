@@ -19,9 +19,9 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    // ── List all students (with optional search) ──────────────────────────────
+    // ── List / Search ──────────────────────────────────────────────────────────
     @GetMapping
-    public String getAllStudents(@RequestParam(required = false) String q, Model model) {
+    public String list(@RequestParam(required = false) String q, Model model) {
         List<Student> students = (q != null && !q.isBlank())
                 ? studentService.search(q)
                 : studentService.getAllStudents();
@@ -30,21 +30,21 @@ public class StudentController {
         return "students/list";
     }
 
-    // ── Show add student form ─────────────────────────────────────────────────
+    // ── New student form ───────────────────────────────────────────────────────
     @GetMapping("/new")
-    public String showAddForm(Model model) {
+    public String newForm(Model model) {
         model.addAttribute("student", new Student());
         model.addAttribute("genders", Student.Gender.values());
         model.addAttribute("pageTitle", "Add New Student");
         return "students/form";
     }
 
-    // ── Save new student ──────────────────────────────────────────────────────
-    @PostMapping("/save")
-    public String saveStudent(@Valid @ModelAttribute("student") Student student,
-                              BindingResult result,
-                              Model model,
-                              RedirectAttributes ra) {
+    // ── Save new student (POST /students/new) ──────────────────────────────────
+    @PostMapping("/new")
+    public String create(@Valid @ModelAttribute("student") Student student,
+                         BindingResult result,
+                         Model model,
+                         RedirectAttributes ra) {
         if (student.getEmail() != null && studentService.emailExists(student.getEmail())) {
             result.rejectValue("email", "duplicate", "This email is already registered");
         }
@@ -54,13 +54,14 @@ public class StudentController {
             return "students/form";
         }
         studentService.saveStudent(student);
-        ra.addFlashAttribute("successMsg", "Student \"" + student.getFullName() + "\" added successfully!");
+        ra.addFlashAttribute("successMsg",
+                "Student \"" + student.getFullName() + "\" added successfully!");
         return "redirect:/students";
     }
 
-    // ── Show edit form ────────────────────────────────────────────────────────
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
+    // ── Edit form ──────────────────────────────────────────────────────────────
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
         return studentService.getStudentById(id)
                 .map(student -> {
                     model.addAttribute("student", student);
@@ -74,15 +75,16 @@ public class StudentController {
                 });
     }
 
-    // ── Update existing student ───────────────────────────────────────────────
-    @PostMapping("/edit/{id}")
-    public String updateStudent(@PathVariable Long id,
-                                @Valid @ModelAttribute("student") Student student,
-                                BindingResult result,
-                                Model model,
-                                RedirectAttributes ra) {
+    // ── Update student (POST /students/{id}/edit) ──────────────────────────────
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("student") Student student,
+                         BindingResult result,
+                         Model model,
+                         RedirectAttributes ra) {
         if (student.getEmail() != null && studentService.emailExistsForOther(student.getEmail(), id)) {
-            result.rejectValue("email", "duplicate", "This email is already registered to another student");
+            result.rejectValue("email", "duplicate",
+                    "This email is already registered to another student");
         }
         if (result.hasErrors()) {
             model.addAttribute("genders", Student.Gender.values());
@@ -95,9 +97,9 @@ public class StudentController {
         return "redirect:/students";
     }
 
-    // ── View student detail ───────────────────────────────────────────────────
-    @GetMapping("/view/{id}")
-    public String viewStudent(@PathVariable Long id, Model model, RedirectAttributes ra) {
+    // ── View detail ────────────────────────────────────────────────────────────
+    @GetMapping("/{id}/view")
+    public String view(@PathVariable Long id, Model model, RedirectAttributes ra) {
         return studentService.getStudentById(id)
                 .map(student -> {
                     model.addAttribute("student", student);
@@ -109,13 +111,14 @@ public class StudentController {
                 });
     }
 
-    // ── Delete student (POST — safer than GET) ────────────────────────────────
-    @PostMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable Long id, RedirectAttributes ra) {
+    // ── Delete ─────────────────────────────────────────────────────────────────
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
         studentService.getStudentById(id).ifPresentOrElse(
                 s -> {
                     studentService.deleteStudent(id);
-                    ra.addFlashAttribute("successMsg", "Student \"" + s.getFullName() + "\" deleted.");
+                    ra.addFlashAttribute("successMsg",
+                            "Student \"" + s.getFullName() + "\" deleted.");
                 },
                 () -> ra.addFlashAttribute("errorMsg", "Student not found.")
         );
