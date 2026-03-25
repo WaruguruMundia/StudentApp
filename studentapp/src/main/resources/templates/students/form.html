@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout(
-        ${pageTitle},
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span><a href=''/students''>Students</a><span class=''sep''>›</span>' + ${pageTitle}
-      )}">
+      th:replace="fragments/layout :: layout(title=${pageTitle}, content=~{::content}, breadcrumb='<a href=&quot;/&quot;>Home</a><span class=&quot;sep&quot;>&rsaquo;</span><a href=&quot;/students&quot;>Students</a><span class=&quot;sep&quot;>&rsaquo;</span>' + ${pageTitle})">
 <body><div th:fragment="content">
 
   <div class="form-card">
     <div class="form-card-header">
       <div class="form-header-icon">👤</div>
       <div>
-        <div class="form-header-title" th:text="${pageTitle}">Student Form</div>
+        <div class="form-header-title"
+             th:text="${pageTitle}">Student Form</div>
         <div class="form-header-sub" th:if="${student.id == null}">Fill in the details to register a new student.</div>
         <div class="form-header-sub" th:if="${student.id != null}">Update the student's information below.</div>
       </div>
     </div>
 
-    <!-- Action: POST /students/new for create, POST /students/{id}/edit for update -->
     <form th:action="${student.id == null ? '/students/new' : '/students/' + student.id + '/edit'}"
           th:object="${student}" method="post" novalidate>
 

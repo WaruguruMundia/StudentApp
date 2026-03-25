@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout(
-        'Students',
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span>Students'
-      )}">
+      th:replace="~{fragments/layout :: layout(title='Students', content=~{::content}, breadcrumb='<a href=&quot;/&quot; >Home</a><span class=&quot;sep&quot;>&rsaquo;</span>Students')}">
 <body><div th:fragment="content">
 
   <div class="page-header">
@@ -76,7 +72,7 @@
                                    (${i.index % 5 == 1} ? 'avatar-blue' :
                                    (${i.index % 5 == 2} ? 'avatar-purple' :
                                    (${i.index % 5 == 3} ? 'avatar-orange' : 'avatar-pink')))"
-                   th:text="${#strings.substring(s.firstName,0,1) + #strings.substring(s.lastName,0,1)}">AB</div>
+                   th:text="${s.firstName.substring(0,1)}">AB</div>
               <div>
                 <div class="student-name" th:text="${s.fullName}">Full Name</div>
                 <div class="student-email" th:text="${s.email}">email@example.com</div>
@@ -98,27 +94,22 @@
 
           <td>
             <span class="credit-pill"
-                  th:text="${s.registrations != null ? s.registrations.size() : 0} + ' courses'">
-              0 courses
+                  th:text="${s.registrations != null ? s.registrations.size() : 0}">
+              0
             </span>
           </td>
 
           <td>
             <div style="display:flex;gap:6px;align-items:center">
-              <!-- View — route: GET /students/{id}/view -->
               <a th:href="@{/students/{id}/view(id=${s.id})}"
                  class="btn btn-sm btn-outline" title="View details">👁</a>
-
-              <!-- Edit — route: GET /students/{id}/edit -->
               <a th:href="@{/students/{id}/edit(id=${s.id})}"
                  class="btn btn-sm btn-outline" title="Edit">✏️</a>
-
-              <!-- Delete — route: POST /students/{id}/delete -->
               <form th:id="'del-' + ${s.id}"
                     th:action="@{/students/{id}/delete(id=${s.id})}"
                     method="post" style="display:inline">
                 <button type="button" class="btn btn-sm btn-danger" title="Delete"
-                        th:onclick="'openDeleteModal(' + ${s.id} + ', \'' + ${s.fullName} + '\', \'del-' + ${s.id} + '\')'">
+                        th:attr="onclick='openDeleteModal(\'' + ${s.id} + '\', \'' + ${s.fullName} + '\', \'del-' + ${s.id} + '\')'">
                   🗑
                 </button>
               </form>
