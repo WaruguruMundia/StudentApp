@@ -3,7 +3,7 @@
       th:replace="~{fragments/layout :: layout(
         'Registrations',
         ~{::content},
-        '<a href=''/''>Home</a> <span class=''sep''>›</span> Registrations'
+        '<a href=''/''>Home</a><span class=''sep''>›</span>Registrations'
       )}">
 <body><div th:fragment="content">
 
@@ -18,10 +18,11 @@
   </div>
 
   <div class="table-card">
+
     <div th:if="${#lists.isEmpty(registrations)}" class="empty-state">
       <div class="empty-icon">📋</div>
       <div class="empty-title">No registrations yet</div>
-      <p class="empty-text">Register students into courses to get started.</p>
+      <p class="empty-text">Enrol students into courses to get started.</p>
       <br/>
       <a href="/registrations/new" class="btn btn-accent">➕ New Registration</a>
     </div>
@@ -40,25 +41,29 @@
       </thead>
       <tbody>
         <tr th:each="reg, i : ${registrations}">
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)" th:text="${i.count}">1</td>
+          <td class="mono text-muted" style="font-size:12px" th:text="${i.count}">1</td>
+
           <td>
             <div class="student-cell">
               <div class="avatar avatar-blue"
                    th:text="${#strings.substring(reg.student.firstName,0,1) + #strings.substring(reg.student.lastName,0,1)}">AB</div>
               <div>
                 <div class="student-name" th:text="${reg.student.fullName}">Full Name</div>
-                <div class="student-email" th:text="${reg.student.email}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b0e060a02072b0e130a061b070e45080406">[email&#160;protected]</a></div>
+                <div class="student-email" th:text="${reg.student.email}">email@example.com</div>
               </div>
             </div>
           </td>
+
           <td>
-            <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;
-                         background:var(--navy);color:var(--acid);padding:2px 8px;border-radius:20px;display:block;width:fit-content;margin-bottom:3px"
+            <span class="code-pill" style="margin-bottom:3px;display:inline-block"
                   th:text="${reg.course.code}">CS101</span>
-            <span style="font-size:13px;font-weight:600" th:text="${reg.course.name}">Course</span>
+            <div class="fw-600" style="font-size:13px;margin-top:3px"
+                 th:text="${reg.course.name}">Course Name</div>
           </td>
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)"
+
+          <td class="mono text-muted" style="font-size:12px"
               th:text="${#temporals.format(reg.registrationDate, 'dd MMM yyyy')}">01 Jan 2024</td>
+
           <td>
             <span class="badge"
                   th:classappend="${reg.status.name() == 'ACTIVE'} ? 'badge-active' :
@@ -66,20 +71,38 @@
                                   (${reg.status.name() == 'DROPPED'} ? 'badge-dropped' : 'badge-pending'))"
                   th:text="${reg.status}">ACTIVE</span>
           </td>
+
           <td>
-            <span th:if="${reg.grade != null}"
-                  class="badge"
+            <span th:if="${reg.grade != null}" class="badge"
                   th:classappend="${reg.letterGrade == 'A'} ? 'badge-grade-a' :
                                   (${reg.letterGrade == 'B'} ? 'badge-grade-b' :
                                   (${reg.letterGrade == 'C'} ? 'badge-grade-c' :
                                   (${reg.letterGrade == 'D'} ? 'badge-grade-d' : 'badge-grade-f')))"
                   th:text="${reg.grade + '% · ' + reg.letterGrade}">90% · A</span>
-            <span th:if="${reg.grade == null}" style="color:var(--muted);font-size:12px">Not graded</span>
+            <span th:if="${reg.grade == null}" class="text-muted" style="font-size:12px">Not graded</span>
           </td>
+
           <td>
-            <div style="display:flex;gap:6px">
-              <a th:href="@{/registrations/{id}/edit(id=${reg.id})}" class="btn btn-sm btn-outline" title="Edit">✏️</a>
-              <form th:id="'del-r-' + ${reg.id}" th:action="@{/registrations/{id}/delete(id=${reg.id})}" method="post" style="display:inline">
-                <button type="button" class="btn btn-sm btn-danger" title="Remove"
-                        th:onclick="'openDeleteModal(' + ${reg.id} + ', \'' + ${reg.student.fullName} + ' → ' + ${reg.course.code} + '\', \'del-r-' + ${reg.id} + '\')'">🗑</button>
-           
+            <div style="display:flex;gap:6px;align-items:center">
+              <!-- Edit — route: GET /registrations/{id}/edit -->
+              <a th:href="@{/registrations/{id}/edit(id=${reg.id})}"
+                 class="btn btn-sm btn-outline" title="Edit registration">✏️</a>
+
+              <!-- Delete — route: POST /registrations/{id}/delete -->
+              <form th:id="'del-r-' + ${reg.id}"
+                    th:action="@{/registrations/{id}/delete(id=${reg.id})}"
+                    method="post" style="display:inline">
+                <button type="button" class="btn btn-sm btn-danger" title="Remove registration"
+                        th:onclick="'openDeleteModal(' + ${reg.id} + ', \'' + ${reg.student.fullName} + ' → ' + ${reg.course.code} + '\', \'del-r-' + ${reg.id} + '\')'">
+                  🗑
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div></body>
+</html>

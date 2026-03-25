@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(
-        'New Registration',
+        ${registration.id == null ? 'New Registration' : 'Edit Registration'},
         ~{::content},
-        '<a href=''/''>Home</a> <span class=''sep''>›</span> <a href=''/registrations''>Registrations</a> <span class=''sep''>›</span> New'
+        '<a href=''/''>Home</a><span class=''sep''>›</span><a href=''/registrations''>Registrations</a><span class=''sep''>›</span>' + (${registration.id == null} ? 'New' : 'Edit')
       )}">
 <body><div th:fragment="content">
 
@@ -27,7 +27,7 @@
           <div class="form-group span-2">
             <label class="form-label">Student <span class="req">*</span></label>
             <select th:field="*{student.id}"
-                    class="form-control" th:classappend="${#fields.hasErrors('student')} ? 'is-invalid'">
+                    class="form-control" th:classappend="${#fields.hasErrors('student')} ? ' is-invalid'">
               <option value="">— Select a student —</option>
               <option th:each="s : ${students}"
                       th:value="${s.id}"
@@ -42,7 +42,7 @@
           <div class="form-group span-2">
             <label class="form-label">Course <span class="req">*</span></label>
             <select th:field="*{course.id}"
-                    class="form-control" th:classappend="${#fields.hasErrors('course')} ? 'is-invalid'">
+                    class="form-control" th:classappend="${#fields.hasErrors('course')} ? ' is-invalid'">
               <option value="">— Select a course —</option>
               <option th:each="c : ${courses}"
                       th:value="${c.id}"
@@ -65,7 +65,7 @@
           <div class="form-group">
             <label class="form-label">Grade (%)</label>
             <input type="number" th:field="*{grade}" step="0.1" min="0" max="100"
-                   class="form-control" th:classappend="${#fields.hasErrors('grade')} ? 'is-invalid'"
+                   class="form-control" th:classappend="${#fields.hasErrors('grade')} ? ' is-invalid'"
                    placeholder="e.g. 85.5"/>
             <div class="field-error" th:if="${#fields.hasErrors('grade')}">
               ⚠ <span th:errors="*{grade}"></span>
@@ -84,7 +84,7 @@
       </div>
 
       <div class="form-footer">
-        <a href="/registrations" class="btn btn-outline">Cancel</a>
+        <a href="/registrations" class="btn btn-outline">← Cancel</a>
         <button type="submit" class="btn btn-accent" th:if="${registration.id == null}">✅ Register Student</button>
         <button type="submit" class="btn btn-primary" th:if="${registration.id != null}">💾 Update Registration</button>
       </div>

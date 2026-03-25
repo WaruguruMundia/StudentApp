@@ -3,14 +3,14 @@
       th:replace="~{fragments/layout :: layout(
         'Courses',
         ~{::content},
-        '<a href=''/''>Home</a> <span class=''sep''>›</span> Courses'
+        '<a href=''/''>Home</a><span class=''sep''>›</span>Courses'
       )}">
 <body><div th:fragment="content">
 
   <div class="page-header">
     <div>
       <h1 class="page-title">Courses</h1>
-      <p class="page-count" th:text="${courses.size()} + ' courses available'">0 courses available</p>
+      <p class="page-count" th:text="${courses.size()} + ' courses available'">0 courses</p>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <form th:action="@{/courses}" method="get" class="search-form">
@@ -18,10 +18,11 @@
           <span class="search-icon">🔍</span>
           <input type="text" name="q" class="search-input"
                  placeholder="Search courses…"
-                 th:value="${searchQuery}"/>
+                 th:value="${searchQuery}" autocomplete="off"/>
         </div>
         <button type="submit" class="btn btn-outline btn-sm">Search</button>
-        <a th:if="${searchQuery}" href="/courses" class="btn btn-outline btn-sm">✕ Clear</a>
+        <a th:if="${searchQuery != null and !searchQuery.isBlank()}"
+           href="/courses" class="btn btn-outline btn-sm">✕ Clear</a>
       </form>
       <a href="/courses/new" class="btn btn-accent">
         <span>➕</span> Add Course
@@ -29,11 +30,11 @@
     </div>
   </div>
 
-  <div th:if="${searchQuery}" class="alert alert-warning">
+  <div th:if="${searchQuery != null and !searchQuery.isBlank()}" class="alert alert-warning">
     <span>🔍</span>
-    Showing results for "<strong th:text="${searchQuery}"></strong>"
+    Results for "<strong th:text="${searchQuery}"></strong>"
     — <span th:text="${courses.size()}">0</span> found.
-    <button class="alert-dismiss" onclick="window.location='/courses'">×</button>
+    <button class="alert-dismiss" type="button" onclick="window.location='/courses'">×</button>
   </div>
 
   <div class="table-card">
@@ -59,32 +60,38 @@
       </thead>
       <tbody>
         <tr th:each="c, i : ${courses}">
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)" th:text="${i.count}">1</td>
+          <td class="mono text-muted" style="font-size:12px" th:text="${i.count}">1</td>
+
           <td>
-            <div style="font-weight:600;font-size:14px" th:text="${c.name}">Course Name</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px"
+            <div class="fw-600" style="font-size:14px" th:text="${c.name}">Course Name</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px"
                  th:if="${c.description != null and !c.description.isBlank()}"
-                 th:text="${#strings.abbreviate(c.description, 60)}"></div>
+                 th:text="${#strings.abbreviate(c.description, 65)}"></div>
           </td>
+
+          <td><span class="code-pill" th:text="${c.code}">CS101</span></td>
+
           <td>
-            <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;
-                         background:var(--navy);color:var(--acid);padding:3px 10px;border-radius:20px"
-                  th:text="${c.code}">CS101</span>
-          </td>
-          <td>
-            <span class="badge badge-dept"
-                  th:if="${c.department != null}"
+            <span class="badge badge-dept" th:if="${c.department != null}"
                   th:text="${c.department.name().replace('_', ' ')}">Dept</span>
-            <span th:if="${c.department == null}" style="color:var(--muted)">—</span>
+            <span th:if="${c.department == null}" class="text-muted">—</span>
           </td>
-          <td th:text="${c.instructor}">Instructor</td>
+
+          <td style="font-size:13.5px" th:text="${c.instructor}">Instructor</td>
+
           <td><span class="credit-pill" th:text="${c.credits} + ' cr'">3 cr</span></td>
+
           <td>
-            <div style="display:flex;gap:6px">
-              <a th:href="@{/courses/{id}/edit(id=${c.id})}" class="btn btn-sm btn-outline" title="Edit">✏️</a>
-              <form th:id="'del-c-' + ${c.id}" th:action="@{/courses/{id}/delete(id=${c.id})}" method="post" style="display:inline">
-                <button type="button" class="btn btn-sm btn-danger" title="Delete"
-                        th:onclick="'openDeleteModal(' + ${c.id} + ', \'' + ${c.name} + '\', \'del-c-' + ${c.id} + '\')'">🗑</button>
+            <div style="display:flex;gap:6px;align-items:center">
+              <a th:href="@{/courses/{id}/edit(id=${c.id})}"
+                 class="btn btn-sm btn-outline" title="Edit course">✏️</a>
+              <form th:id="'del-c-' + ${c.id}"
+                    th:action="@{/courses/{id}/delete(id=${c.id})}"
+                    method="post" style="display:inline">
+                <button type="button" class="btn btn-sm btn-danger" title="Delete course"
+                        th:onclick="'openDeleteModal(' + ${c.id} + ', \'' + ${c.name} + '\', \'del-c-' + ${c.id} + '\')'">
+                  🗑
+                </button>
               </form>
             </div>
           </td>

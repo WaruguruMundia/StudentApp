@@ -4,6 +4,7 @@ import com.example.studentapp.model.Student;
 import com.example.studentapp.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,10 +14,12 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-
-    // --- Basic CRUD Operations ---
-
     public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    /** Alias used by RegistrationController and other callers */
+    public List<Student> findAll() {
         return studentRepository.findAll();
     }
 
@@ -32,31 +35,20 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    // --- Enhanced Functionality (Merged from 1st Version) ---
-
-    /**
-     * Searches for students by name.
-     * If the query is empty, it returns all students.
-     */
+    /** Search by first name, last name, or email */
     public List<Student> search(String query) {
         if (query == null || query.trim().isEmpty()) {
             return studentRepository.findAll();
         }
-        return studentRepository.findByNameContainingIgnoreCase(query.trim());
+        return studentRepository.searchByName(query.trim());
     }
 
-    /**
-     * Checks if an email is already in use by any student.
-     */
     public boolean emailExists(String email) {
         return studentRepository.existsByEmail(email);
     }
 
-    /**
-     * Checks if an email is taken by a DIFFERENT student (used for updates).
-     */
     public boolean emailExistsForOther(String email, Long id) {
-        Student student = studentRepository.findByEmail(email);
-        return student != null && !student.getId().equals(id);
+        Student existing = studentRepository.findByEmail(email);
+        return existing != null && !existing.getId().equals(id);
     }
 }
