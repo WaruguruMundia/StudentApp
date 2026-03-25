@@ -1,80 +1,131 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Student Form | StudentApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-    <style>
-        body { background-color: #f8f9fa; }
-        .navbar { background-color: #0d6efd; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-    </style>
-</head>
-<body>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(
+        ${student.id == null ? 'Add New Student' : 'Edit Student'},
+        ~{::content},
+        '<a href=''/''>Home</a><span class=''sep''>›</span><a href=''/students''>Students</a><span class=''sep''>›</span>' + (${student.id == null} ? 'Add New' : 'Edit')
+      )}">
+<body><div th:fragment="content">
 
-<!-- Navbar -->
-<nav class="navbar navbar-dark px-4 py-3 mb-4">
-        <span class="navbar-brand fw-bold fs-4">
-            <i class="bi bi-mortarboard-fill me-2"></i>StudentApp
-        </span>
-</nav>
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-header-icon">👤</div>
+      <div>
+        <div class="form-header-title"
+             th:text="${student.id == null ? 'Add New Student' : 'Edit Student'}">Student Form</div>
+        <div class="form-header-sub" th:if="${student.id == null}">Fill in the details to register a new student.</div>
+        <div class="form-header-sub" th:if="${student.id != null}">Update the student's information below.</div>
+      </div>
+    </div>
 
-<!-- Main Content -->
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <form th:action="${student.id == null ? '/students/new' : '/students/' + student.id + '/edit'}"
+          th:object="${student}" method="post" novalidate>
 
-            <!-- Card -->
-            <div class="card p-4">
+      <div class="form-body">
+        <div class="form-grid">
 
-                <!-- Title -->
-                <h4 class="fw-bold mb-4"
-                    th:text="${student.id} ? 'Edit Student' : 'Add New Student'">
-                </h4>
-
-                <!-- Form -->
-                <form th:action="@{/students/save}" th:object="${student}" method="post">
-                    <input type="hidden" th:field="*{id}" />
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Full Name</label>
-                        <input type="text" class="form-control" th:field="*{name}"
-                               placeholder="e.g. John Doe" required/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Email Address</label>
-                        <input type="email" class="form-control" th:field="*{email}"
-                               placeholder="e.g. john@university.com" required/>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Program</label>
-                        <input type="text" class="form-control" th:field="*{program}"
-                               placeholder="e.g. Computer Science" required/>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Year of Study</label>
-                        <input type="number" class="form-control" th:field="*{year}"
-                               placeholder="e.g. 1" min="1" max="6" required/>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-check-circle me-1"></i> Save Student
-                        </button>
-                        <a href="/students" class="btn btn-outline-secondary px-4">
-                            <i class="bi bi-x-circle me-1"></i> Cancel
-                        </a>
-                    </div>
-
-                </form>
+          <!-- First Name -->
+          <div class="form-group">
+            <label class="form-label" for="firstName">First Name <span class="req">*</span></label>
+            <input type="text" id="firstName" th:field="*{firstName}"
+                   class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? ' is-invalid'"
+                   placeholder="e.g. Amara" autocomplete="given-name"/>
+            <div class="field-error" th:if="${#fields.hasErrors('firstName')}">
+              ⚠ <span th:errors="*{firstName}"></span>
             </div>
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group">
+            <label class="form-label" for="lastName">Last Name <span class="req">*</span></label>
+            <input type="text" id="lastName" th:field="*{lastName}"
+                   class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? ' is-invalid'"
+                   placeholder="e.g. Osei" autocomplete="family-name"/>
+            <div class="field-error" th:if="${#fields.hasErrors('lastName')}">
+              ⚠ <span th:errors="*{lastName}"></span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group span-2">
+            <label class="form-label" for="email">Email Address <span class="req">*</span></label>
+            <input type="email" id="email" th:field="*{email}"
+                   class="form-control" th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'"
+                   placeholder="e.g. amara.osei@university.edu" autocomplete="email"/>
+            <div class="field-error" th:if="${#fields.hasErrors('email')}">
+              ⚠ <span th:errors="*{email}"></span>
+            </div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group">
+            <label class="form-label" for="dateOfBirth">Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}"
+                   class="form-control" th:classappend="${#fields.hasErrors('dateOfBirth')} ? ' is-invalid'"/>
+            <div class="field-error" th:if="${#fields.hasErrors('dateOfBirth')}">
+              ⚠ <span th:errors="*{dateOfBirth}"></span>
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input type="tel" id="phone" th:field="*{phone}"
+                   class="form-control" th:classappend="${#fields.hasErrors('phone')} ? ' is-invalid'"
+                   placeholder="+254712345678" autocomplete="tel"/>
+            <div class="field-error" th:if="${#fields.hasErrors('phone')}">
+              ⚠ <span th:errors="*{phone}"></span>
+            </div>
+            <span class="form-hint">International format, e.g. +254712345678</span>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group">
+            <label class="form-label" for="gender">Gender</label>
+            <select id="gender" th:field="*{gender}" class="form-control">
+              <option value="">— Select gender —</option>
+              <option th:each="g : ${genders}" th:value="${g}" th:text="${g}">MALE</option>
+            </select>
+          </div>
+
+          <!-- Program -->
+          <div class="form-group">
+            <label class="form-label" for="program">Programme</label>
+            <input type="text" id="program" th:field="*{program}"
+                   class="form-control" th:classappend="${#fields.hasErrors('program')} ? ' is-invalid'"
+                   placeholder="e.g. Computer Science"/>
+            <div class="field-error" th:if="${#fields.hasErrors('program')}">
+              ⚠ <span th:errors="*{program}"></span>
+            </div>
+          </div>
+
+          <!-- Year -->
+          <div class="form-group">
+            <label class="form-label" for="year">Year of Study</label>
+            <input type="number" id="year" th:field="*{year}" min="1" max="6"
+                   class="form-control" th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
+                   placeholder="e.g. 2"/>
+            <div class="field-error" th:if="${#fields.hasErrors('year')}">
+              ⚠ <span th:errors="*{year}"></span>
+            </div>
+            <span class="form-hint">Between 1 and 6</span>
+          </div>
 
         </div>
-    </div>
-</div>
+      </div>
 
-</body>
+      <div class="form-footer">
+        <a href="/students" class="btn btn-outline">← Cancel</a>
+        <button type="submit" class="btn btn-accent" th:if="${student.id == null}">
+          ✅ Save Student
+        </button>
+        <button type="submit" class="btn btn-primary" th:if="${student.id != null}">
+          💾 Update Student
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div></body>
 </html>
