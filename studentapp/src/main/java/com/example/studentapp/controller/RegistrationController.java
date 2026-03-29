@@ -20,7 +20,7 @@ public class RegistrationController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("registrations", registrationService.findAll());
+        model.addAttribute("registrations", registrationService.findAllWithDetails());
         return "registrations/list";
     }
 
@@ -77,10 +77,34 @@ public class RegistrationController {
             model.addAttribute("statuses", Registration.Status.values());
             return "registrations/form";
         }
-        registration.setId(id);
-        registrationService.save(registration);
-        ra.addFlashAttribute("successMsg", "Registration updated successfully!");
-        return "redirect:/registrations";
+
+        return registrationService.findById(id).map(existing -> {
+            if (registration.getStudent() != null && registration.getCourse() != null) {
+                Long newStudentId = registration.getStudent().getId();
+                Long newCourseId  = registration.getCourse().getId();
+                boolean studentChanged = !newStudentId.equals(existing.getStudent().getId());
+                boolean courseChanged  = !newCourseId.equals(existing.getCourse().getId());
+                if ((studentChanged || courseChanged)
+                        && registrationService.alreadyRegistered(newStudentId, newCourseId)) {
+                    result.rejectValue("course", "duplicate",
+                            "This student is already registered for that course");
+                    model.addAttribute("students", studentService.getAllStudents());
+                    model.addAttribute("courses", courseService.findAll());
+                    model.addAttribute("statuses", Registration.Status.values());
+                    return "registrations/form";
+                }
+            }
+
+            existing.setStudent(registration.getStudent());
+            existing.setCourse(registration.getCourse());
+            existing.setStatus(registration.getStatus());
+            registrationService.save(existing);
+            ra.addFlashAttribute("successMsg", "Registration updated successfully!");
+            return "redirect:/registrations";
+        }).orElseGet(() -> {
+            ra.addFlashAttribute("errorMsg", "Registration not found.");
+            return "redirect:/registrations";
+        });
     }
 
     @PostMapping("/{id}/delete")
