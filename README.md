@@ -23,6 +23,8 @@ StudentApp is designed to streamline the administrative tasks of educational ins
 - Java 23 (JDK 23)
 - Maven 3.9+
 - MySQL (Optional, H2 used by default)
+- The project was built and tested on Windows 11 using IntelliJ IDEA Ultimate Edition. Open the project in IntelliJ and follow the instructions below.
+- **Note:** The project uses Spring Boot 3.2.2 and Spring Data JPA 3.2.2.
 
 #### Installation
 1.  **Clone the repository:**
