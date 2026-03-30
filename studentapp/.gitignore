@@ -33,3 +33,5 @@ build/
 .vscode/
 
 src/main/resources/application.properties
+jdk25.zip
+jdk25/
