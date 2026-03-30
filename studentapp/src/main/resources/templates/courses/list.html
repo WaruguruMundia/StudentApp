@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(
-        'Courses',
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span>Courses'
+        title='Courses',
+        content=~{::content},
+        breadcrumb='<a href=&quot;/&quot;>Home</a><span class=&quot;sep&quot;>&rsaquo;</span>Courses'
       )}">
 <body><div th:fragment="content">
 
@@ -22,9 +22,9 @@
         </div>
         <button type="submit" class="btn btn-outline btn-sm">Search</button>
         <a th:if="${searchQuery != null and !searchQuery.isBlank()}"
-           href="/courses" class="btn btn-outline btn-sm">✕ Clear</a>
+           th:href="@{/courses}" class="btn btn-outline btn-sm">✕ Clear</a>
       </form>
-      <a href="/courses/new" class="btn btn-accent">
+      <a th:href="@{/courses/new}" class="btn btn-accent">
         <span>➕</span> Add Course
       </a>
     </div>
@@ -43,7 +43,7 @@
       <div class="empty-title">No courses yet</div>
       <p class="empty-text">Create your first course to get started.</p>
       <br/>
-      <a href="/courses/new" class="btn btn-accent">➕ Create Course</a>
+      <a th:href="@{/courses/new}" class="btn btn-accent">➕ Create Course</a>
     </div>
 
     <table class="data-table" th:if="${!#lists.isEmpty(courses)}">
@@ -89,7 +89,7 @@
                     th:action="@{/courses/{id}/delete(id=${c.id})}"
                     method="post" style="display:inline">
                 <button type="button" class="btn btn-sm btn-danger" title="Delete course"
-                        th:onclick="'openDeleteModal(' + ${c.id} + ', \'' + ${c.name} + '\', \'del-c-' + ${c.id} + '\')'">
+                        th:attr="onclick=|openDeleteModal('${c.id}', '${c.name}', 'del-c-${c.id}')|">
                   🗑
                 </button>
               </form>

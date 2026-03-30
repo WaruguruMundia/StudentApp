@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(
-        ${registration.id == null ? 'New Registration' : 'Edit Registration'},
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span><a href=''/registrations''>Registrations</a><span class=''sep''>›</span>' + (${registration.id == null} ? 'New' : 'Edit')
+        title=${registration.id == null ? 'New Registration' : 'Edit Registration'},
+        content=~{::content},
+        breadcrumb='<a href=&quot;/&quot;>Home</a><span class=&quot;sep&quot;>&rsaquo;</span><a href=&quot;/registrations&quot;>Registrations</a><span class=&quot;sep&quot;>&rsaquo;</span>' + (${registration.id == null} ? 'New' : 'Edit')
       )}">
 <body><div th:fragment="content">
 
@@ -84,7 +84,7 @@
       </div>
 
       <div class="form-footer">
-        <a href="/registrations" class="btn btn-outline">← Cancel</a>
+        <a th:href="@{/registrations}" class="btn btn-outline">← Cancel</a>
         <button type="submit" class="btn btn-accent" th:if="${registration.id == null}">✅ Register Student</button>
         <button type="submit" class="btn btn-primary" th:if="${registration.id != null}">💾 Update Registration</button>
       </div>

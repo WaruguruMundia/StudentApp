@@ -13,7 +13,7 @@ public class RegistrationService {
     @Autowired
     private RegistrationRepository registrationRepository;
 
-    public List<Registration> findAll() {
+    public List<Registration> findAllWithDetails() {
         return registrationRepository.findAllWithDetails();
     }
 

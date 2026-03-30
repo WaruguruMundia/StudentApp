@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(
-        'Registrations',
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span>Registrations'
+        title='Registrations',
+        content=~{::content},
+        breadcrumb='<a href=&quot;/&quot;>Home</a><span class=&quot;sep&quot;>&rsaquo;</span>Registrations'
       )}">
 <body><div th:fragment="content">
 
@@ -12,7 +12,7 @@
       <h1 class="page-title">Registrations</h1>
       <p class="page-count" th:text="${registrations.size()} + ' total registrations'">0 registrations</p>
     </div>
-    <a href="/registrations/new" class="btn btn-accent">
+    <a th:href="@{/registrations/new}" class="btn btn-accent">
       <span>➕</span> New Registration
     </a>
   </div>
@@ -24,7 +24,7 @@
       <div class="empty-title">No registrations yet</div>
       <p class="empty-text">Enrol students into courses to get started.</p>
       <br/>
-      <a href="/registrations/new" class="btn btn-accent">➕ New Registration</a>
+      <a th:href="@{/registrations/new}" class="btn btn-accent">➕ New Registration</a>
     </div>
 
     <table class="data-table" th:if="${!#lists.isEmpty(registrations)}">
@@ -46,7 +46,7 @@
           <td>
             <div class="student-cell">
               <div class="avatar avatar-blue"
-                   th:text="${#strings.substring(reg.student.firstName,0,1) + #strings.substring(reg.student.lastName,0,1)}">AB</div>
+                   th:text="${(reg.student.firstName != null and !reg.student.firstName.isEmpty() ? reg.student.firstName.substring(0,1) : '') + (reg.student.lastName != null and !reg.student.lastName.isEmpty() ? reg.student.lastName.substring(0,1) : '')}">AB</div>
               <div>
                 <div class="student-name" th:text="${reg.student.fullName}">Full Name</div>
                 <div class="student-email" th:text="${reg.student.email}">email@example.com</div>
@@ -93,7 +93,7 @@
                     th:action="@{/registrations/{id}/delete(id=${reg.id})}"
                     method="post" style="display:inline">
                 <button type="button" class="btn btn-sm btn-danger" title="Remove registration"
-                        th:onclick="'openDeleteModal(' + ${reg.id} + ', \'' + ${reg.student.fullName} + ' → ' + ${reg.course.code} + '\', \'del-r-' + ${reg.id} + '\')'">
+                        th:attr="onclick=|openDeleteModal('${reg.id}', '${reg.student.fullName} → ${reg.course.code}', 'del-r-${reg.id}')|">
                   🗑
                 </button>
               </form>
