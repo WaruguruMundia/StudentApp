@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(
-        ${pageTitle},
-        ~{::content},
-        '<a href=''/''>Home</a><span class=''sep''>›</span><a href=''/courses''>Courses</a><span class=''sep''>›</span>' + ${pageTitle}
+        title=${pageTitle},
+        content=~{::content},
+        breadcrumb='<a href=&quot;/&quot;>Home</a><span class=&quot;sep&quot;>&rsaquo;</span><a href=&quot;/courses&quot;>Courses</a><span class=&quot;sep&quot;>&rsaquo;</span>' + ${pageTitle}
       )}">
 <body><div th:fragment="content">
 
@@ -88,7 +88,7 @@
       </div>
 
       <div class="form-footer">
-        <a href="/courses" class="btn btn-outline">← Cancel</a>
+        <a th:href="@{/courses}" class="btn btn-outline">← Cancel</a>
         <button type="submit" class="btn btn-accent" th:if="${course.id == null}">✅ Save Course</button>
         <button type="submit" class="btn btn-primary" th:if="${course.id != null}">💾 Update Course</button>
       </div>

@@ -21,19 +21,19 @@ public class DataSeeder implements CommandLineRunner {
         if (studentRepo.count() > 0) return; // Don't seed if data exists
 
         // Students
-        Student s1 = studentRepo.save(new Student("Amara", "Osei", "amara.osei@uni.edu", LocalDate.of(2001, 3, 15)));
+        Student s1 = new Student("Amara", "Osei", "amara.osei@uni.edu", LocalDate.of(2001, 3, 15));
         s1.setGender(Student.Gender.FEMALE); s1.setPhone("+254712345678"); studentRepo.save(s1);
 
-        Student s2 = studentRepo.save(new Student("Kwame", "Mensah", "kwame.mensah@uni.edu", LocalDate.of(2000, 7, 22)));
+        Student s2 = new Student("Kwame", "Mensah", "kwame.mensah@uni.edu", LocalDate.of(2000, 7, 22));
         s2.setGender(Student.Gender.MALE); s2.setPhone("+254798765432"); studentRepo.save(s2);
 
-        Student s3 = studentRepo.save(new Student("Fatima", "Al-Hassan", "fatima.alhassan@uni.edu", LocalDate.of(2002, 1, 10)));
+        Student s3 = new Student("Fatima", "Al-Hassan", "fatima.alhassan@uni.edu", LocalDate.of(2002, 1, 10));
         s3.setGender(Student.Gender.FEMALE); studentRepo.save(s3);
 
-        Student s4 = studentRepo.save(new Student("David", "Kariuki", "david.kariuki@uni.edu", LocalDate.of(2001, 9, 5)));
+        Student s4 = new Student("David", "Kariuki", "david.kariuki@uni.edu", LocalDate.of(2001, 9, 5));
         s4.setGender(Student.Gender.MALE); studentRepo.save(s4);
 
-        Student s5 = studentRepo.save(new Student("Nora", "Wanjiku", "nora.wanjiku@uni.edu", LocalDate.of(2000, 11, 28)));
+        Student s5 = new Student("Nora", "Wanjiku", "nora.wanjiku@uni.edu", LocalDate.of(2000, 11, 28));
         s5.setGender(Student.Gender.FEMALE); studentRepo.save(s5);
 
         // Courses

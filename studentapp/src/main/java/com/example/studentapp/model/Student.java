@@ -112,7 +112,16 @@ public class Student {
     public void setYear(Integer year) { this.year = year; }
 
     public List<Registration> getRegistrations() { return registrations; }
-    public void setRegistrations(List<Registration> registrations) { this.registrations = registrations; }
+    public void setRegistrations(List<Registration> registrations) {
+        if (this.registrations == null) {
+            this.registrations = registrations;
+        } else if (this.registrations != registrations) { // avoid re-assignment to same collection
+            this.registrations.clear();
+            if (registrations != null) {
+                this.registrations.addAll(registrations);
+            }
+        }
+    }
 
     // ── Helper methods ────────────────────────────────────────────────────────
 
