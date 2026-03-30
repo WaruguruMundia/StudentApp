@@ -43,12 +43,6 @@ StudentApp is designed to streamline the administrative tasks of educational ins
 5.  **Access the app:**
     Open your browser and navigate to `http://localhost:8081`.
 
-### Screenshots
-*(Note: Replace these placeholders with actual screenshots of your running application)*
-- **Dashboard Overview:** `![Dashboard](docs/screenshots/dashboard.png)`
-- **Student List:** `![Students](docs/screenshots/students.png)`
-- **Registration Form:** `![Registration](docs/screenshots/registration_form.png)`
-
 ---
 
 ## System Architecture
@@ -68,7 +62,7 @@ The project follows a classic **Layered Architecture** (often referred to as N-T
 
 - **Hybrid Compatibility Layer:** The `Student` entity includes a "Compatibility Shim" (getters/setters like `getName()` and `setName()`) that allows the application to remain compatible with legacy code while transitioning to a more granular `firstName`/`lastName` structure.
 - **Advanced Validation Logic:** Beyond simple field checks, the system implements custom cross-field validation within the service layer to prevent illogical data states, such as a student being registered for the same course twice.
-- **Zero-Config Development:** By leveraging H2 and a pre-configured `DataSeeder`, the project allows new developers to start working immediately without setting up a local database server.
+- **Zero-Config Development:** By leveraging H2 and a pre-configured `DataSeeder`, the project allows new developers to start working immediately without setting up a local database server and personal seeder data.
 
 ---
 
@@ -77,12 +71,14 @@ The project follows a classic **Layered Architecture** (often referred to as N-T
 - **Bidirectional Relationship Management:** Managing the `@OneToMany` and `@ManyToOne` relationships between Students, Courses, and Registrations required careful handling of cascade types and collection updates to avoid `DataIntegrityViolationException`.
 - **Form Data Binding with Complex Objects:** Binding Thymeleaf form inputs to nested JPA entities (like selecting a `Student` object from a dropdown in a `Registration` form) required specific configuration and the use of converters or ID-based lookups.
 - **Schema Migration:** Transitioning from a single `name` field to split `firstName` and `lastName` fields while maintaining data consistency during the migration phase was a technical hurdle.
+- **Port Selection:** Default port 8080 was already in use on my machine, hence the choice of 8081 was seen as most suitable and time friendly.
 
 ---
 
 ## Reflection and Lessons Learned
 
-- **Decoupling is Key:** Separating business logic into the Service layer rather than leaving it in Controllers made the code much more testable and maintainable.
-- **Validation Early and Often:** Implementing validation at both the Domain level (annotations) and the Service level (business rules) is crucial for building a resilient application.
-- **The Power of Spring Data JPA:** The project highlighted how much development time can be saved by using Spring Data JPA's derived query methods and repository abstractions.
-- **Documentation Matters:** Maintaining a clear understanding of the data flow between the layers was essential, especially when debugging complex registration workflows.
+- **Importance of Decoupling:** Separating business logic into the Service layer instead of leaving it in Controllers made the code much more testable and maintainable.
+- **Validation:** Implementing validation at both the Domain level (annotations) and the Service level (business rules) is important for a working application..
+- **Spring Data JPA:** The Spring Data JPA's derived query methods and repository abstractions saved on development time.
+- **Importance of Documentation:** Documentation provided a ready reference resource to understand the project.
+
